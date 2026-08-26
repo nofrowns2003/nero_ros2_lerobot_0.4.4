@@ -1,0 +1,139 @@
+{
+  "dataset": {
+    "repo_id": "szy/nero_ge_clean_train",
+    "root": "/home/szy/.cache/huggingface/lerobot/szy/nero_ge_clean_train",
+    "expected_robot_type": "nero_ros2",
+    "expected_fps": 30,
+    "episodes": null,
+    "revision": null,
+    "video_backend": "pyav",
+    "streaming": false,
+    "use_imagenet_stats": true,
+    "image_transforms": {
+      "enable": false,
+      "max_num_transforms": 3,
+      "random_order": false
+    }
+  },
+  "validation_dataset": {
+    "repo_id": "szy/nero_ge_clean_val",
+    "root": "/home/szy/.cache/huggingface/lerobot/szy/nero_ge_clean_val",
+    "expected_episodes": 6,
+    "expected_fps": 30,
+    "video_backend": "pyav"
+  },
+  "test_dataset": {
+    "repo_id": "szy/nero_ge_clean_test",
+    "root": "/home/szy/.cache/huggingface/lerobot/szy/nero_ge_clean_test",
+    "expected_episodes": 7,
+    "expected_fps": 30,
+    "video_backend": "pyav"
+  },
+  "features": {
+    "input": [
+      "observation.state",
+      "observation.images.color",
+      "observation.images.fisheye"
+    ],
+    "output": [
+      "action"
+    ],
+    "exclude": [
+      "observation.images.depth"
+    ]
+  },
+  "policy": {
+    "device": "cuda",
+    "use_amp": false,
+    "use_peft": false,
+    "pretrained_path": null,
+    "push_to_hub": false,
+    "repo_id": "szy/nero_ge_clean_act_color_fisheye_30hz",
+    "private": true,
+    "license": "apache-2.0",
+    "tags": [
+      "lerobot",
+      "act",
+      "nero_ros2"
+    ],
+    "n_obs_steps": 1,
+    "chunk_size": 100,
+    "n_action_steps": 1,
+    "normalization_mapping": {
+      "VISUAL": "MEAN_STD",
+      "STATE": "MEAN_STD",
+      "ACTION": "MEAN_STD"
+    },
+    "vision_backbone": "resnet18",
+    "pretrained_backbone_weights": "ResNet18_Weights.IMAGENET1K_V1",
+    "replace_final_stride_with_dilation": false,
+    "pre_norm": false,
+    "dim_model": 512,
+    "n_heads": 8,
+    "dim_feedforward": 3200,
+    "feedforward_activation": "relu",
+    "n_encoder_layers": 4,
+    "n_decoder_layers": 1,
+    "use_vae": true,
+    "latent_dim": 32,
+    "n_vae_encoder_layers": 4,
+    "temporal_ensemble_coeff": null,
+    "dropout": 0.1,
+    "kl_weight": 10.0
+  },
+  "optimizer": {
+    "type": "adamw",
+    "lr": 0.00001,
+    "backbone_lr": 0.00001,
+    "weight_decay": 0.0001,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08,
+    "grad_clip_norm": 10.0,
+    "scheduler": null
+  },
+  "training": {
+    "output_dir": "/home/szy/lerobot-0.4.4-clean/outputs/train/nero_ge_clean_act_color_fisheye_30hz",
+    "job_name": "nero_ge_clean_act_color_fisheye_30hz",
+    "resume": false,
+    "seed": 1000,
+    "num_workers": 2,
+    "batch_size": 1,
+    "steps": 160000,
+    "eval_freq": 0,
+    "log_freq": 200,
+    "save_checkpoint": true,
+    "save_freq": 10000,
+    "tolerance_s": 0.0001,
+    "use_rabc": false
+  },
+  "offline_validation": {
+    "device": "cuda",
+    "frame_stride": 5,
+    "max_samples_per_episode": 0,
+    "action_prefix_steps": [
+      1,
+      5,
+      10,
+      30,
+      60,
+      100
+    ]
+  },
+  "wandb": {
+    "enable": false,
+    "project": "nero_ros2_act",
+    "entity": null,
+    "notes": "ACT training on 48 train episodes; 6 validation episodes; depth excluded",
+    "run_id": null,
+    "mode": "disabled",
+    "disable_artifact": true
+  },
+  "evaluation": {
+    "n_episodes": 1,
+    "batch_size": 1,
+    "use_async_envs": false
+  }
+}

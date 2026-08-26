@@ -1,0 +1,185 @@
+=================================
+Topic: /gripper/camera/color/image_raw
+Time: Sat Aug  1 06:53:53 PM CST 2026
+=================================
+
+######## ros2 topic info -v ########
+Type: sensor_msgs/msg/Image
+
+Publisher count: 1
+
+Node name: camera
+Node namespace: /gripper
+Topic type: sensor_msgs/msg/Image
+Endpoint type: PUBLISHER
+GID: 01.0f.0f.aa.2f.a7.06.20.00.00.00.00.00.00.2b.03.00.00.00.00.00.00.00.00
+QoS profile:
+  Reliability: RELIABLE
+  History (Depth): UNKNOWN
+  Durability: TRANSIENT_LOCAL
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Subscription count: 0
+
+
+######## ros2 topic echo --once ########
+header:
+  stamp:
+    sec: 1785581638
+    nanosec: 17012939
+  frame_id: gripper/camera_color_optical_frame
+height: 480
+width: 640
+encoding: rgb8
+is_bigendian: 0
+step: 1920
+data:
+- 180
+- 177
+- 193
+- 180
+- 177
+- 193
+- 179
+- 179
+- 197
+- 179
+- 179
+- 197
+- 176
+- 177
+- 192
+- 178
+- 179
+- 194
+- 180
+- 178
+- 192
+- 180
+- 178
+- 192
+- 182
+- 176
+- 191
+- 181
+- 175
+- 190
+- 180
+- 178
+- 192
+- 182
+- 180
+- 194
+- 181
+- 179
+- 193
+- 180
+- 178
+- 192
+- 179
+- 177
+- 191
+- 180
+- 178
+- 192
+- 177
+- 178
+- 193
+- 178
+- 179
+- 194
+- 180
+- 181
+- 194
+- 178
+- 179
+- 192
+- 183
+- 184
+- 197
+- 184
+- 185
+- 198
+- 179
+- 180
+- 193
+- 179
+- 180
+- 193
+- 184
+- 181
+- 195
+- 187
+- 184
+- 198
+- 185
+- 179
+- 194
+- 185
+- 179
+- 194
+- 182
+- 179
+- 193
+- 181
+- 178
+- 192
+- 180
+- 182
+- 192
+- 180
+- 182
+- 192
+- 177
+- 179
+- 187
+- 178
+- 180
+- 188
+- 183
+- 181
+- 188
+- 186
+- 184
+- 191
+- 186
+- 185
+- 189
+- 183
+- 182
+- 186
+- 189
+- 185
+- 190
+- 189
+- 185
+- 190
+- 184
+- 183
+- 187
+- 183
+- 182
+- 186
+- 186
+- 185
+- '...'
+---
+
+######## ros2 topic hz ########
+WARNING: topic [/gripper/camera/color/image_raw] does not appear to be published yet
+average rate: 12.013
+	min: 0.020s max: 0.368s std dev: 0.08625s window: 13
+average rate: 15.171
+	min: 0.020s max: 0.368s std dev: 0.06241s window: 32
+average rate: 14.520
+	min: 0.020s max: 0.368s std dev: 0.05504s window: 46
+average rate: 15.936
+	min: 0.020s max: 0.368s std dev: 0.04854s window: 67
+average rate: 14.494
+	min: 0.020s max: 0.368s std dev: 0.05116s window: 76
+average rate: 15.061
+	min: 0.020s max: 0.368s std dev: 0.04815s window: 95
+failed to initialize wait set: the given context is not valid, either rcl_init() was not called or rcl_shutdown() was called., at ./src/rcl/wait.c:130

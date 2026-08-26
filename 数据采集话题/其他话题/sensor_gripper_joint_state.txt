@@ -1,0 +1,73 @@
+=================================
+Topic: /sensor/gripper/joint_state
+Time: Sat Aug 15 02:10:43 PM CST 2026
+=================================
+
+######## ros2 topic info -v ########
+Type: sensor_msgs/msg/JointState
+
+Publisher count: 1
+
+Node name: sensor_serial_gripper_imu
+Node namespace: /
+Topic type: sensor_msgs/msg/JointState
+Endpoint type: PUBLISHER
+GID: 01.0f.0f.aa.0a.e6.87.92.00.00.00.00.00.00.14.03.00.00.00.00.00.00.00.00
+QoS profile:
+  Reliability: RELIABLE
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Subscription count: 1
+
+Node name: mujoco_arm_position_sim_node
+Node namespace: /
+Topic type: sensor_msgs/msg/JointState
+Endpoint type: SUBSCRIPTION
+GID: 01.0f.0f.aa.02.f1.e7.f8.00.00.00.00.00.00.1e.04.00.00.00.00.00.00.00.00
+QoS profile:
+  Reliability: RELIABLE
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+
+######## ros2 topic echo --once ########
+header:
+  stamp:
+    sec: 1786774245
+    nanosec: 927822931
+  frame_id: ''
+name:
+- sensor_gripper_center_joint
+position:
+- 0.0967070407030412
+velocity: []
+effort: []
+---
+
+######## ros2 topic hz ########
+average rate: 125.789
+	min: 0.000s max: 0.012s std dev: 0.00374s window: 127
+average rate: 125.109
+	min: 0.000s max: 0.021s std dev: 0.00390s window: 252
+average rate: 125.048
+	min: 0.000s max: 0.021s std dev: 0.00385s window: 377
+average rate: 125.008
+	min: 0.000s max: 0.021s std dev: 0.00382s window: 503
+average rate: 124.960
+	min: 0.000s max: 0.021s std dev: 0.00382s window: 628
+average rate: 125.135
+	min: 0.000s max: 0.021s std dev: 0.00381s window: 755
+average rate: 125.100
+	min: 0.000s max: 0.021s std dev: 0.00383s window: 880
+average rate: 125.068
+	min: 0.000s max: 0.021s std dev: 0.00382s window: 1006
+failed to initialize wait set: the given context is not valid, either rcl_init() was not called or rcl_shutdown() was called., at ./src/rcl/wait.c:130

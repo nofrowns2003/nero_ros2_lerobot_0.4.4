@@ -1,0 +1,119 @@
+=================================
+Topic: /feedback/joint_states
+Time: Sat Aug  1 06:55:09 PM CST 2026
+=================================
+
+######## ros2 topic info -v ########
+Type: sensor_msgs/msg/JointState
+
+Publisher count: 1
+
+Node name: agx_arm_ctrl_single_node
+Node namespace: /
+Topic type: sensor_msgs/msg/JointState
+Endpoint type: PUBLISHER
+GID: 01.0f.0f.aa.f2.a8.1f.58.00.00.00.00.00.00.11.03.00.00.00.00.00.00.00.00
+QoS profile:
+  Reliability: RELIABLE
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Subscription count: 2
+
+Node name: robot_state_publisher
+Node namespace: /
+Topic type: sensor_msgs/msg/JointState
+Endpoint type: SUBSCRIPTION
+GID: 01.0f.0f.aa.f4.a8.13.65.00.00.00.00.00.00.15.04.00.00.00.00.00.00.00.00
+QoS profile:
+  Reliability: BEST_EFFORT
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Node name: arm_ik_pose_node
+Node namespace: /
+Topic type: sensor_msgs/msg/JointState
+Endpoint type: SUBSCRIPTION
+GID: 01.0f.0f.aa.fa.a8.e7.a5.00.00.00.00.00.00.14.04.00.00.00.00.00.00.00.00
+QoS profile:
+  Reliability: RELIABLE
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+
+######## ros2 topic echo --once ########
+A message was lost!!!
+	total count change:1
+	total count: 1---
+header:
+  stamp:
+    sec: 1785581710
+    nanosec: 555608034
+  frame_id: ''
+name:
+- joint1
+- joint2
+- joint3
+- joint4
+- joint5
+- joint6
+- joint7
+- gripper
+position:
+- -0.15852825595864495
+- -1.4883644262232045
+- -0.2590766741660383
+- 2.1379585205229743
+- -0.05612978874413764
+- -0.3314380249537232
+- 1.5701156483866188
+- 0.0
+velocity:
+- 0.0
+- 0.0
+- 0.0
+- 0.0
+- 0.0
+- 0.0
+- 0.0
+- 0.0
+effort:
+- -0.8742595866761097
+- 5.57006357295982
+- 1.0592237728525336
+- -2.8373813974993864
+- 0.3672526195052865
+- 0.0790735305154923
+- -0.45348587893977993
+- 0.0
+---
+
+######## ros2 topic hz ########
+average rate: 195.327
+	min: 0.001s max: 0.017s std dev: 0.00214s window: 197
+average rate: 196.606
+	min: 0.001s max: 0.017s std dev: 0.00194s window: 395
+average rate: 196.382
+	min: 0.001s max: 0.017s std dev: 0.00183s window: 592
+average rate: 197.090
+	min: 0.001s max: 0.017s std dev: 0.00173s window: 792
+average rate: 197.665
+	min: 0.001s max: 0.017s std dev: 0.00169s window: 993
+average rate: 197.889
+	min: 0.001s max: 0.017s std dev: 0.00165s window: 1193
+average rate: 198.152
+	min: 0.001s max: 0.017s std dev: 0.00161s window: 1393
+average rate: 198.428
+	min: 0.001s max: 0.017s std dev: 0.00158s window: 1594

@@ -1,0 +1,99 @@
+=================================
+Topic: /gripper/camera_fisheye/color/camera_info
+Time: Sat Aug  1 06:54:44 PM CST 2026
+=================================
+
+######## ros2 topic info -v ########
+Type: sensor_msgs/msg/CameraInfo
+
+Publisher count: 1
+
+Node name: gripper_camera_fisheye
+Node namespace: /
+Topic type: sensor_msgs/msg/CameraInfo
+Endpoint type: PUBLISHER
+GID: 01.0f.0f.aa.31.a7.a7.80.00.00.00.00.00.00.12.03.00.00.00.00.00.00.00.00
+QoS profile:
+  Reliability: RELIABLE
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Subscription count: 0
+
+
+######## ros2 topic echo --once ########
+header:
+  stamp:
+    sec: 1785581686
+    nanosec: 649039021
+  frame_id: gripper/camera_fisheye_link_color
+height: 0
+width: 0
+distortion_model: ''
+d: []
+k:
+- 0.0
+- 0.0
+- 0.0
+- 0.0
+- 0.0
+- 0.0
+- 0.0
+- 0.0
+- 0.0
+r:
+- 0.0
+- 0.0
+- 0.0
+- 0.0
+- 0.0
+- 0.0
+- 0.0
+- 0.0
+- 0.0
+p:
+- 0.0
+- 0.0
+- 0.0
+- 0.0
+- 0.0
+- 0.0
+- 0.0
+- 0.0
+- 0.0
+- 0.0
+- 0.0
+- 0.0
+binning_x: 0
+binning_y: 0
+roi:
+  x_offset: 0
+  y_offset: 0
+  height: 0
+  width: 0
+  do_rectify: false
+---
+
+######## ros2 topic hz ########
+WARNING: topic [/gripper/camera_fisheye/color/camera_info] does not appear to be published yet
+average rate: 29.954
+	min: 0.024s max: 0.043s std dev: 0.00400s window: 32
+average rate: 29.973
+	min: 0.024s max: 0.043s std dev: 0.00413s window: 62
+average rate: 29.974
+	min: 0.024s max: 0.043s std dev: 0.00353s window: 93
+average rate: 29.972
+	min: 0.024s max: 0.043s std dev: 0.00338s window: 123
+average rate: 30.006
+	min: 0.024s max: 0.043s std dev: 0.00320s window: 154
+average rate: 29.996
+	min: 0.024s max: 0.043s std dev: 0.00318s window: 185
+average rate: 29.988
+	min: 0.024s max: 0.043s std dev: 0.00301s window: 216
+average rate: 29.998
+	min: 0.024s max: 0.043s std dev: 0.00292s window: 247
+failed to initialize wait set: the given context is not valid, either rcl_init() was not called or rcl_shutdown() was called., at ./src/rcl/wait.c:130

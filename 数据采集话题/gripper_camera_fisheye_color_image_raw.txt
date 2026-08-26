@@ -1,0 +1,187 @@
+=================================
+Topic: /gripper/camera_fisheye/color/image_raw
+Time: Sat Aug  1 06:54:08 PM CST 2026
+=================================
+
+######## ros2 topic info -v ########
+Type: sensor_msgs/msg/Image
+
+Publisher count: 1
+
+Node name: gripper_camera_fisheye
+Node namespace: /
+Topic type: sensor_msgs/msg/Image
+Endpoint type: PUBLISHER
+GID: 01.0f.0f.aa.31.a7.a7.80.00.00.00.00.00.00.11.03.00.00.00.00.00.00.00.00
+QoS profile:
+  Reliability: RELIABLE
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Subscription count: 0
+
+
+######## ros2 topic echo --once ########
+header:
+  stamp:
+    sec: 1785581650
+    nanosec: 312067315
+  frame_id: gripper/camera_fisheye_link_color
+height: 480
+width: 640
+encoding: bgr8
+is_bigendian: 0
+step: 1920
+data:
+- 0
+- 2
+- 3
+- 0
+- 3
+- 4
+- 0
+- 4
+- 5
+- 1
+- 5
+- 6
+- 3
+- 5
+- 6
+- 3
+- 5
+- 6
+- 3
+- 5
+- 5
+- 2
+- 4
+- 4
+- 2
+- 4
+- 4
+- 2
+- 4
+- 4
+- 4
+- 5
+- 3
+- 4
+- 5
+- 3
+- 4
+- 5
+- 3
+- 4
+- 5
+- 3
+- 4
+- 5
+- 3
+- 4
+- 5
+- 3
+- 4
+- 6
+- 0
+- 4
+- 6
+- 0
+- 3
+- 5
+- 0
+- 3
+- 5
+- 0
+- 3
+- 4
+- 0
+- 3
+- 4
+- 0
+- 6
+- 4
+- 3
+- 6
+- 4
+- 3
+- 6
+- 4
+- 4
+- 7
+- 5
+- 5
+- 9
+- 4
+- 6
+- 9
+- 4
+- 6
+- 9
+- 3
+- 8
+- 9
+- 3
+- 8
+- 9
+- 3
+- 8
+- 8
+- 3
+- 5
+- 3
+- 3
+- 3
+- 4
+- 5
+- 3
+- 2
+- 5
+- 3
+- 3
+- 6
+- 4
+- 3
+- 6
+- 4
+- 4
+- 7
+- 5
+- 4
+- 6
+- 6
+- 4
+- 6
+- 6
+- 5
+- 10
+- 9
+- 4
+- 9
+- 8
+- 3
+- 7
+- '...'
+---
+
+######## ros2 topic hz ########
+average rate: 12.579
+	min: 0.030s max: 0.397s std dev: 0.09827s window: 13
+average rate: 14.324
+	min: 0.029s max: 0.397s std dev: 0.07313s window: 31
+average rate: 14.692
+	min: 0.029s max: 0.397s std dev: 0.06229s window: 47
+average rate: 14.764
+	min: 0.029s max: 0.397s std dev: 0.05759s window: 62
+average rate: 13.460
+	min: 0.029s max: 0.397s std dev: 0.06532s window: 70
+average rate: 14.275
+	min: 0.022s max: 0.397s std dev: 0.06169s window: 89
+average rate: 14.112
+	min: 0.022s max: 0.397s std dev: 0.06047s window: 103
+average rate: 14.559
+	min: 0.022s max: 0.397s std dev: 0.05724s window: 121

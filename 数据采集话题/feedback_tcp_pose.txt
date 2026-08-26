@@ -1,0 +1,80 @@
+=================================
+Topic: /feedback/tcp_pose
+Time: Sat Aug  1 06:55:20 PM CST 2026
+=================================
+
+######## ros2 topic info -v ########
+Type: geometry_msgs/msg/PoseStamped
+
+Publisher count: 1
+
+Node name: agx_arm_ctrl_single_node
+Node namespace: /
+Topic type: geometry_msgs/msg/PoseStamped
+Endpoint type: PUBLISHER
+GID: 01.0f.0f.aa.f2.a8.1f.58.00.00.00.00.00.00.12.03.00.00.00.00.00.00.00.00
+QoS profile:
+  Reliability: RELIABLE
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Subscription count: 1
+
+Node name: pub_delta_pose_node
+Node namespace: /
+Topic type: geometry_msgs/msg/PoseStamped
+Endpoint type: SUBSCRIPTION
+GID: 01.0f.0f.aa.fc.a8.a0.1c.00.00.00.00.00.00.14.04.00.00.00.00.00.00.00.00
+QoS profile:
+  Reliability: RELIABLE
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+
+######## ros2 topic echo --once ########
+A message was lost!!!
+	total count change:1
+	total count: 1---
+header:
+  stamp:
+    sec: 1785581722
+    nanosec: 784882783
+  frame_id: ''
+pose:
+  position:
+    x: 0.013764126322968556
+    y: 0.04201340114296065
+    z: 0.2653557079593708
+  orientation:
+    x: -0.23601388078310587
+    y: -0.6815532424427644
+    z: 0.6598933522245561
+    w: -0.21053120786071172
+---
+
+######## ros2 topic hz ########
+average rate: 195.263
+	min: 0.001s max: 0.013s std dev: 0.00198s window: 197
+average rate: 197.202
+	min: 0.001s max: 0.013s std dev: 0.00183s window: 397
+average rate: 198.020
+	min: 0.001s max: 0.013s std dev: 0.00170s window: 597
+average rate: 198.580
+	min: 0.001s max: 0.013s std dev: 0.00166s window: 798
+average rate: 198.885
+	min: 0.001s max: 0.013s std dev: 0.00164s window: 999
+average rate: 199.060
+	min: 0.001s max: 0.013s std dev: 0.00156s window: 1199
+average rate: 199.188
+	min: 0.001s max: 0.013s std dev: 0.00152s window: 1399
+average rate: 199.258
+	min: 0.001s max: 0.013s std dev: 0.00150s window: 1600
+failed to initialize wait set: the given context is not valid, either rcl_init() was not called or rcl_shutdown() was called., at ./src/rcl/wait.c:130

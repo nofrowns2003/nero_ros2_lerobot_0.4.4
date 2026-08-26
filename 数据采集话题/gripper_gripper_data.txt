@@ -1,0 +1,65 @@
+=================================
+Topic: /gripper/gripper/data
+Time: Sat Aug  1 06:55:57 PM CST 2026
+=================================
+
+######## ros2 topic info -v ########
+Type: data_msgs/msg/Gripper
+
+Publisher count: 1
+
+Node name: gripper_serial_gripper_imu
+Node namespace: /
+Topic type: data_msgs/msg/Gripper
+Endpoint type: PUBLISHER
+GID: 01.0f.0f.aa.35.a7.3a.ff.00.00.00.00.00.00.12.03.00.00.00.00.00.00.00.00
+QoS profile:
+  Reliability: RELIABLE
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Subscription count: 0
+
+
+######## ros2 topic echo --once ########
+header:
+  stamp:
+    sec: 1785581759
+    nanosec: 310768672
+  frame_id: ''
+angle: 1.6664
+distance: 0.09653515107160213
+effort: 6.0
+velocity: 0.0
+enable: true
+set_zero: false
+error: false
+voltage: 23.899999618530273
+driver_temp: 39.0
+motor_temp: 32.0
+bus_current: 0.0
+status: '0x40'
+---
+
+######## ros2 topic hz ########
+WARNING: topic [/gripper/gripper/data] does not appear to be published yet
+average rate: 138.160
+	min: 0.000s max: 0.013s std dev: 0.00423s window: 141
+average rate: 137.070
+	min: 0.000s max: 0.021s std dev: 0.00429s window: 277
+average rate: 138.188
+	min: 0.000s max: 0.021s std dev: 0.00433s window: 419
+average rate: 138.618
+	min: 0.000s max: 0.021s std dev: 0.00445s window: 560
+average rate: 138.066
+	min: 0.000s max: 0.021s std dev: 0.00441s window: 696
+average rate: 138.848
+	min: 0.000s max: 0.021s std dev: 0.00443s window: 840
+average rate: 138.673
+	min: 0.000s max: 0.021s std dev: 0.00443s window: 979
+average rate: 138.961
+	min: 0.000s max: 0.021s std dev: 0.00442s window: 1120

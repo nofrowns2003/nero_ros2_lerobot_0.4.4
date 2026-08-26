@@ -1,0 +1,185 @@
+=================================
+Topic: /gripper/camera/aligned_depth_to_color/image_raw
+Time: Sat Aug  1 06:54:20 PM CST 2026
+=================================
+
+######## ros2 topic info -v ########
+Type: sensor_msgs/msg/Image
+
+Publisher count: 1
+
+Node name: camera
+Node namespace: /gripper
+Topic type: sensor_msgs/msg/Image
+Endpoint type: PUBLISHER
+GID: 01.0f.0f.aa.2f.a7.06.20.00.00.00.00.00.00.30.03.00.00.00.00.00.00.00.00
+QoS profile:
+  Reliability: RELIABLE
+  History (Depth): UNKNOWN
+  Durability: TRANSIENT_LOCAL
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Subscription count: 0
+
+
+######## ros2 topic echo --once ########
+header:
+  stamp:
+    sec: 1785581662
+    nanosec: 322865479
+  frame_id: gripper/camera_color_optical_frame
+height: 480
+width: 640
+encoding: 16UC1
+is_bigendian: 0
+step: 1280
+data:
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- 0
+- '...'
+---
+
+######## ros2 topic hz ########
+average rate: 17.389
+	min: 0.020s max: 0.166s std dev: 0.04037s window: 18
+average rate: 18.882
+	min: 0.019s max: 0.166s std dev: 0.03290s window: 39
+average rate: 17.687
+	min: 0.019s max: 0.166s std dev: 0.03604s window: 56
+average rate: 19.021
+	min: 0.015s max: 0.166s std dev: 0.03253s window: 80
+average rate: 19.370
+	min: 0.015s max: 0.166s std dev: 0.03101s window: 102
+average rate: 19.567
+	min: 0.015s max: 0.166s std dev: 0.03128s window: 124
+average rate: 19.800
+	min: 0.015s max: 0.166s std dev: 0.02976s window: 146

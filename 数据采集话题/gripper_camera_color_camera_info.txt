@@ -1,0 +1,102 @@
+=================================
+Topic: /gripper/camera/color/camera_info
+Time: Sat Aug  1 06:54:32 PM CST 2026
+=================================
+
+######## ros2 topic info -v ########
+Type: sensor_msgs/msg/CameraInfo
+
+Publisher count: 1
+
+Node name: camera
+Node namespace: /gripper
+Topic type: sensor_msgs/msg/CameraInfo
+Endpoint type: PUBLISHER
+GID: 01.0f.0f.aa.2f.a7.06.20.00.00.00.00.00.00.2d.03.00.00.00.00.00.00.00.00
+QoS profile:
+  Reliability: RELIABLE
+  History (Depth): UNKNOWN
+  Durability: VOLATILE
+  Lifespan: Infinite
+  Deadline: Infinite
+  Liveliness: AUTOMATIC
+  Liveliness lease duration: Infinite
+
+Subscription count: 0
+
+
+######## ros2 topic echo --once ########
+header:
+  stamp:
+    sec: 1785581674
+    nanosec: 326118896
+  frame_id: gripper/camera_color_optical_frame
+height: 480
+width: 640
+distortion_model: plumb_bob
+d:
+- -0.05151807889342308
+- 0.0543983168900013
+- -0.0009428634657524526
+- 0.0007338937139138579
+- -0.018343467265367508
+k:
+- 435.5146484375
+- 0.0
+- 318.2387390136719
+- 0.0
+- 434.48651123046875
+- 224.56378173828125
+- 0.0
+- 0.0
+- 1.0
+r:
+- 1.0
+- 0.0
+- 0.0
+- 0.0
+- 1.0
+- 0.0
+- 0.0
+- 0.0
+- 1.0
+p:
+- 435.5146484375
+- 0.0
+- 318.2387390136719
+- 0.0
+- 0.0
+- 434.48651123046875
+- 224.56378173828125
+- 0.0
+- 0.0
+- 0.0
+- 1.0
+- 0.0
+binning_x: 0
+binning_y: 0
+roi:
+  x_offset: 0
+  y_offset: 0
+  height: 0
+  width: 0
+  do_rectify: false
+---
+
+######## ros2 topic hz ########
+average rate: 28.434
+	min: 0.020s max: 0.068s std dev: 0.00911s window: 30
+average rate: 26.593
+	min: 0.000s max: 0.343s std dev: 0.04395s window: 55
+average rate: 27.286
+	min: 0.000s max: 0.343s std dev: 0.03604s window: 84
+average rate: 27.688
+	min: 0.000s max: 0.343s std dev: 0.03172s window: 113
+average rate: 28.031
+	min: 0.000s max: 0.343s std dev: 0.02838s window: 143
+average rate: 28.025
+	min: 0.000s max: 0.343s std dev: 0.02622s window: 172
+average rate: 28.322
+	min: 0.000s max: 0.343s std dev: 0.02420s window: 203
+average rate: 28.400
+	min: 0.000s max: 0.343s std dev: 0.02271s window: 233
