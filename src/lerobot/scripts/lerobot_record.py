@@ -159,12 +159,39 @@ NERO_TRACKING_STABLE_TIME_S = 0.3
 NERO_TRACKING_TIMEOUT_S = 5.0
 
 
+def countdown_before_recording(
+    episode_index: int,
+    seconds: int,
+    events: dict[str, bool],
+) -> bool:
+    """Show a terminal countdown without creating any dataset frames."""
+    if seconds <= 0:
+        return not events["stop_recording"]
+
+    logging.info("复位和跟随检查已完成，%s 秒后开始录制 episode %s", seconds, episode_index)
+    for remaining in range(seconds, 0, -1):
+        print(
+            f"\r========== episode {episode_index} 将在 {remaining} 秒后开始录制 ==========",
+            end="",
+            flush=True,
+        )
+        deadline = time.monotonic() + 1.0
+        while not events["stop_recording"] and time.monotonic() < deadline:
+            time.sleep(min(0.05, deadline - time.monotonic()))
+        if events["stop_recording"]:
+            print("\n录制已取消", flush=True)
+            return False
+
+    print(f"\r========== episode {episode_index} 正式开始录制！====================", flush=True)
+    return True
+
+
 def wait_for_nero_tracking(
     robot: Robot,
     teleop: Teleoperator | list[Teleoperator] | None,
     events: dict[str, bool],
 ) -> bool:
-    """Wait outside recording until the simulated arm has caught up with the leader."""
+    """Wait outside recording until the Nero arm has caught up with the teleop target."""
     if robot.name != "nero_ros2" or not isinstance(teleop, Teleoperator) or teleop.name != "nero_ros2":
         return True
 
@@ -466,20 +493,40 @@ def record_loop(
         )
     while timestamp < control_time_s:
         start_loop_t = time.perf_counter()
+        t_obs = 0
+        t_stamp = 0
+        t_process = 0
+        t_action = 0
+        t_send = 0
+        t_dataset = 0
 
         if events["exit_early"]:
             events["exit_early"] = False
             break
 
         # Get robot observation
+        _t = time.perf_counter()
+
         obs = robot.get_observation()
+
+        t_obs = time.perf_counter() - _t
+
+
+        _t = time.perf_counter()
+
         observation_ros_timestamps = (
             robot.get_observation_timestamps() if ros_timestamp_writer is not None else None
         )
+
+        t_stamp = time.perf_counter() - _t
         action_ros_timestamps = None
 
         # Applies a pipeline to the raw robot observation, default is IdentityProcessor
+        _t = time.perf_counter()
+
         obs_processed = robot_observation_processor(obs)
+
+        t_process = time.perf_counter() - _t
 
         if policy is not None or dataset is not None:
             observation_frame = build_dataset_frame(dataset.features, obs_processed, prefix=OBS_STR)
@@ -500,7 +547,11 @@ def record_loop(
             act_processed_policy: RobotAction = make_robot_action(action_values, dataset.features)
 
         elif policy is None and isinstance(teleop, Teleoperator):
+            _t = time.perf_counter()
+
             act = teleop.get_action()
+
+            t_action = time.perf_counter() - _t
             action_ros_timestamps = (
                 teleop.get_action_timestamps() if ros_timestamp_writer is not None else None
             )
@@ -537,7 +588,11 @@ def record_loop(
         # Action can eventually be clipped using `max_relative_target`,
         # so action actually sent is saved in the dataset. action = postprocessor.process(action)
         # TODO(steven, pepijn, adil): we should use a pipeline step to clip the action, so the sent action is the action that we input to the robot.
+        _t = time.perf_counter()
+
         _sent_action = robot.send_action(robot_action_to_send)
+
+        t_send = time.perf_counter() - _t
 
         # Write to dataset
         if dataset is not None:
@@ -558,7 +613,11 @@ def record_loop(
                 )
             action_frame = build_dataset_frame(dataset.features, action_values, prefix=ACTION)
             frame = {**observation_frame, **action_frame, "task": single_task}
+            _t = time.perf_counter()
+
             dataset.add_frame(frame)
+
+            t_dataset = time.perf_counter() - _t
             if ros_timestamp_writer is not None:
                 if observation_ros_timestamps is None or action_ros_timestamps is None:
                     raise RuntimeError("ROS 时间戳写入已启用，但当前帧缺少 observation 或 action 时间戳")
@@ -579,9 +638,15 @@ def record_loop(
 
         sleep_time_s: float = 1 / fps - dt_s
         if sleep_time_s < 0:
-            logging.warning(
-                f"Record loop is running slower ({1 / dt_s:.1f} Hz) than the target FPS ({fps} Hz). Dataset frames might be dropped and robot control might be unstable. Common causes are: 1) Camera FPS not keeping up 2) Policy inference taking too long 3) CPU starvation"
-            )
+                logging.warning(
+        f"Loop slow {1/dt_s:.1f}Hz | "
+        f"obs:{t_obs*1000:.2f}ms "
+        f"stamp:{t_stamp*1000:.2f}ms "
+        f"process:{t_process*1000:.2f}ms "
+        f"action:{t_action*1000:.2f}ms "
+        f"send:{t_send*1000:.2f}ms "
+        f"dataset:{t_dataset*1000:.2f}ms"
+        )
 
         precise_sleep(max(sleep_time_s, 0.0))
 
@@ -704,13 +769,36 @@ def record(cfg: RecordConfig) -> LeRobotDataset:
         with VideoEncodingManager(dataset):
             recorded_episodes = 0
 
-            # Randomize the first episode too. Later episodes are reset by F8 below.
-            if robot.name == "nero_ros2":
+            # Optionally place Nero at its configured simulation/real reset pose
+            # before the first episode. Later episodes can be reset with F8.
+            if robot.name == "nero_ros2" and robot.config.reset_on_start:
                 log_say("Reset the environment", cfg.play_sounds)
                 robot.reset()
-                wait_for_nero_tracking(robot, teleop, events)
 
             while recorded_episodes < cfg.dataset.num_episodes and not events["stop_recording"]:
+                # reset() is synchronous for Nero: it returns only after the arm
+                # reaches and holds the reset pose and teleoperation is safely
+                # rebased. Recheck tracking here for every path (normal, F8 and
+                # rerecord), then count down before record_loop can write frame 0.
+                if robot.name == "nero_ros2":
+                    # Codec/container initialization can take close to a second
+                    # for three cameras. Do it before the stability check and
+                    # countdown so frame 0 only performs a non-blocking enqueue.
+                    prepare_start_t = time.perf_counter()
+                    if dataset.prepare_episode():
+                        logging.info(
+                            "视频编码器已在录制前就绪，初始化耗时 %.1fms（不计入 episode）",
+                            (time.perf_counter() - prepare_start_t) * 1000,
+                        )
+                    if not wait_for_nero_tracking(robot, teleop, events):
+                        break
+                    if not countdown_before_recording(
+                        episode_index=dataset.num_episodes,
+                        seconds=robot.config.record_countdown_s,
+                        events=events,
+                    ):
+                        break
+
                 log_say(f"Recording episode {dataset.num_episodes}", cfg.play_sounds)
                 record_loop(
                     robot=robot,
@@ -731,33 +819,32 @@ def record(cfg: RecordConfig) -> LeRobotDataset:
                     ros_timestamp_writer=ros_timestamp_writer,
                 )
 
-                # F8 is a one-key episode boundary for reset-capable simulation robots.
-                # Reset before the blocking save so scene randomization is immediate and
-                # video encoding time is also useful settling time for the next episode.
+                # F8 is a one-key episode boundary for reset-capable robots. Nero's
+                # reset backend is selected by robot.reset_mode (simulation/real/disabled).
                 if events["reset_environment"]:
                     events["reset_environment"] = False
                     events["exit_early"] = False
 
-                    # Reset first so the user sees the new randomized scene immediately.
-                    # Saving/encoding the completed episode can then overlap with the
-                    # simulator settling at the leader's current pose.
-                    has_next_episode = recorded_episodes + 1 < cfg.dataset.num_episodes
-                    if has_next_episode and not events["stop_recording"]:
-                        reset = getattr(robot, "reset", None)
-                        if not callable(reset):
-                            raise RuntimeError(
-                                f"Robot {robot.name!r} does not provide reset(), but F8 environment reset was requested"
-                            )
-                        log_say("Reset the environment", cfg.play_sounds)
-                        reset()
+                    # Reset before the blocking video save so real hardware stops
+                    # following immediately. Crucially, preserve the completed
+                    # episode even if reset raises: the hardware gate remains closed
+                    # by reset(), while this finally block commits data and ROS stamps.
+                    try:
+                        has_next_episode = recorded_episodes + 1 < cfg.dataset.num_episodes
+                        if has_next_episode and not events["stop_recording"]:
+                            reset = getattr(robot, "reset", None)
+                            if not callable(reset):
+                                raise RuntimeError(
+                                    f"Robot {robot.name!r} does not provide reset(), but F8 environment reset was requested"
+                                )
+                            log_say("Reset the environment", cfg.play_sounds)
+                            reset()
+                    finally:
+                        dataset.save_episode()
+                        if ros_timestamp_writer is not None:
+                            ros_timestamp_writer.save_episode()
+                        recorded_episodes += 1
 
-                    dataset.save_episode()
-                    if ros_timestamp_writer is not None:
-                        ros_timestamp_writer.save_episode()
-                    recorded_episodes += 1
-
-                    if has_next_episode and not events["stop_recording"]:
-                        wait_for_nero_tracking(robot, teleop, events)
                     continue
 
                 # Execute a few seconds without recording to give time to manually reset the environment
@@ -767,22 +854,27 @@ def record(cfg: RecordConfig) -> LeRobotDataset:
                 ):
                     log_say("Reset the environment", cfg.play_sounds)
 
-                    # reset g1 robot
-                    if robot.name == "unitree_g1":
+                    # Nero reset() is synchronous and verifies the reset pose,
+                    # stability and safe teleoperation resume before returning.
+                    # Do this automatically when an episode reaches its time
+                    # limit instead of entering the unverified manual reset loop.
+                    if robot.name == "nero_ros2" and robot.config.reset_mode != "disabled":
                         robot.reset()
-
-                    record_loop(
-                        robot=robot,
-                        events=events,
-                        fps=cfg.dataset.fps,
-                        teleop_action_processor=teleop_action_processor,
-                        robot_action_processor=robot_action_processor,
-                        robot_observation_processor=robot_observation_processor,
-                        teleop=teleop,
-                        control_time_s=cfg.dataset.reset_time_s,
-                        single_task=cfg.dataset.single_task,
-                        display_data=cfg.display_data,
-                    )
+                    elif robot.name == "unitree_g1":
+                        robot.reset()
+                    else:
+                        record_loop(
+                            robot=robot,
+                            events=events,
+                            fps=cfg.dataset.fps,
+                            teleop_action_processor=teleop_action_processor,
+                            robot_action_processor=robot_action_processor,
+                            robot_observation_processor=robot_observation_processor,
+                            teleop=teleop,
+                            control_time_s=cfg.dataset.reset_time_s,
+                            single_task=cfg.dataset.single_task,
+                            display_data=cfg.display_data,
+                        )
 
                     # F8 may also arrive during the legacy manual-reset window. Consume it
                     # here so it cannot immediately terminate an empty next episode.

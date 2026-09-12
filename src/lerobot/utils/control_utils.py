@@ -165,7 +165,7 @@ def init_keyboard_listener():
             elif key == keyboard.Key.f8:
                 if not key_state["f8_down"]:
                     key_state["f8_down"] = True
-                    print("F8 pressed. Saving this episode and resetting the environment...")
+                    print("F8 pressed. Saving this episode and resetting the robot/environment...")
                     events["reset_environment"] = True
                     events["exit_early"] = True
         except Exception as e:

@@ -45,6 +45,36 @@ lerobot-record \
   --resume=true
 ```
 
+### 1.1 实机 F8 自动复位
+
+实机采集时显式选择 `real` 复位模式，并设置七个关节的复位目标（单位 rad）：
+
+```bash
+lerobot-record \
+  --robot.type=nero_ros2 \
+  --robot.id=nero \
+  --robot.reset_mode=real \
+  --robot.reset_joint_positions='[0.0,-1.74,0.0,2.14,0.0,0.0,1.57]' \
+  --robot.real_reset_timeout_s=30 \
+  --teleop.type=nero_ros2 \
+  --teleop.id=pika \
+  ...
+```
+
+按 F8 后，程序会结束当前 episode，关闭实机控制门、暂停 Pika 遥操作，向
+`/control/move_j` 发布一次复位目标并等待关节稳定；随后在控制门关闭期间重新建立
+Pika/TCP 基准，确认恢复后的首个 IK 目标接近实机当前位置，最后才恢复控制并开始下一轮。
+任何步骤失败时控制门保持关闭，需要排查后手动调用 `/control_enable` 恢复。
+
+实机模式默认不会在采集程序启动时自动运动。如需第一轮开始前也自动复位，增加：
+
+```text
+--robot.reset_on_start=true
+```
+
+仿真继续使用默认的 `--robot.reset_mode=simulation`，F8 会调用 `/reset_episode`；完全
+禁用 F8 的机器人/环境复位可使用 `--robot.reset_mode=disabled`。
+
 主要参数：
 
 * `dataset.repo_id`：LeRobot 数据集 ID

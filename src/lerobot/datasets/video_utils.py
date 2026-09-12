@@ -21,6 +21,7 @@ import queue
 import shutil
 import tempfile
 import threading
+import time
 import warnings
 from dataclasses import dataclass, field
 from fractions import Fraction
@@ -589,6 +590,7 @@ class _CameraEncoderThread(threading.Thread):
         result_queue: queue.Queue,
         stop_event: threading.Event,
         encoder_threads: int | None = None,
+        frame_shape: tuple[int, int, int] | None = None,
     ):
         super().__init__(daemon=True)
         self.video_path = video_path
@@ -602,6 +604,9 @@ class _CameraEncoderThread(threading.Thread):
         self.result_queue = result_queue
         self.stop_event = stop_event
         self.encoder_threads = encoder_threads
+        self.frame_shape = frame_shape
+        self.ready_event = threading.Event()
+        self.startup_error: str | None = None
 
     def run(self) -> None:
         from lerobot.datasets.compute_stats import RunningQuantileStats, auto_downsample_height_width
@@ -613,6 +618,39 @@ class _CameraEncoderThread(threading.Thread):
 
         try:
             logging.getLogger("libav").setLevel(av.logging.WARNING)
+
+            def open_output(height: int, width: int):
+                video_options = _get_codec_options(self.vcodec, self.g, self.crf, self.preset)
+                if self.encoder_threads is not None:
+                    if self.vcodec == "libsvtav1":
+                        lp_param = f"lp={self.encoder_threads}"
+                        if "svtav1-params" in video_options:
+                            video_options["svtav1-params"] += f":{lp_param}"
+                        else:
+                            video_options["svtav1-params"] = lp_param
+                    else:
+                        video_options["threads"] = str(self.encoder_threads)
+                Path(self.video_path).parent.mkdir(parents=True, exist_ok=True)
+                opened_container = av.open(str(self.video_path), "w")
+                opened_stream = opened_container.add_stream(self.vcodec, self.fps, options=video_options)
+                opened_stream.pix_fmt = self.pix_fmt
+                opened_stream.width = width
+                opened_stream.height = height
+                opened_stream.time_base = Fraction(1, self.fps)
+                # PyAV otherwise opens the codec lazily on the first encode(),
+                # which would move the expensive setup back into frame 0.
+                opened_stream.codec_context.open()
+                return opened_container, opened_stream
+
+            # When the image shape is known, complete container/codec setup before
+            # signaling ready. The recording loop can then start only after all
+            # camera workers are waiting for their first real frame.
+            if self.frame_shape is not None:
+                height, width, channels = self.frame_shape
+                if channels != 3:
+                    raise ValueError(f"Streaming video requires 3 channels, got shape {self.frame_shape}")
+                container, output_stream = open_output(height, width)
+            self.ready_event.set()
 
             while True:
                 try:
@@ -637,23 +675,7 @@ class _CameraEncoderThread(threading.Thread):
                 # Open container on first frame (to get width/height)
                 if container is None:
                     height, width = frame_data.shape[:2]
-                    video_options = _get_codec_options(self.vcodec, self.g, self.crf, self.preset)
-                    if self.encoder_threads is not None:
-                        if self.vcodec == "libsvtav1":
-                            lp_param = f"lp={self.encoder_threads}"
-                            if "svtav1-params" in video_options:
-                                video_options["svtav1-params"] += f":{lp_param}"
-                            else:
-                                video_options["svtav1-params"] = lp_param
-                        else:
-                            video_options["threads"] = str(self.encoder_threads)
-                    Path(self.video_path).parent.mkdir(parents=True, exist_ok=True)
-                    container = av.open(str(self.video_path), "w")
-                    output_stream = container.add_stream(self.vcodec, self.fps, options=video_options)
-                    output_stream.pix_fmt = self.pix_fmt
-                    output_stream.width = width
-                    output_stream.height = height
-                    output_stream.time_base = Fraction(1, self.fps)
+                    container, output_stream = open_output(height, width)
 
                 # Encode frame with explicit timestamps
                 pil_img = Image.fromarray(frame_data)
@@ -693,6 +715,8 @@ class _CameraEncoderThread(threading.Thread):
                 self.result_queue.put(("ok", None))
 
         except Exception as e:
+            self.startup_error = str(e)
+            self.ready_event.set()
             logging.error(f"Encoder thread error: {e}")
             if container is not None:
                 with contextlib.suppress(Exception):
@@ -740,7 +764,17 @@ class StreamingVideoEncoder:
         self._dropped_frames: dict[str, int] = {}
         self._episode_active = False
 
-    def start_episode(self, video_keys: list[str], temp_dir: Path) -> None:
+    @property
+    def episode_active(self) -> bool:
+        return self._episode_active
+
+    def start_episode(
+        self,
+        video_keys: list[str],
+        temp_dir: Path,
+        video_shapes: dict[str, tuple[int, int, int]] | None = None,
+        ready_timeout_s: float = 120.0,
+    ) -> None:
         """Start encoder threads for a new episode.
 
         Args:
@@ -772,6 +806,7 @@ class StreamingVideoEncoder:
                 result_queue=result_queue,
                 stop_event=stop_event,
                 encoder_threads=self.encoder_threads,
+                frame_shape=None if video_shapes is None else video_shapes[video_key],
             )
             encoder_thread.start()
 
@@ -782,6 +817,20 @@ class StreamingVideoEncoder:
             self._video_paths[video_key] = video_path
 
         self._episode_active = True
+
+        # Legacy callers without shapes retain lazy first-frame initialization.
+        # Dataset recording passes shapes and waits here, outside record_loop.
+        if video_shapes is not None:
+            deadline = time.monotonic() + ready_timeout_s
+            for video_key, thread in self._threads.items():
+                remaining = deadline - time.monotonic()
+                if remaining <= 0 or not thread.ready_event.wait(timeout=remaining):
+                    self.cancel_episode()
+                    raise TimeoutError(f"Timed out preparing streaming encoder for {video_key}")
+                if thread.startup_error is not None:
+                    error = thread.startup_error
+                    self.cancel_episode()
+                    raise RuntimeError(f"Failed to prepare streaming encoder for {video_key}: {error}")
 
     def feed_frame(self, video_key: str, image: np.ndarray) -> None:
         """Feed a frame to the encoder for a specific camera.

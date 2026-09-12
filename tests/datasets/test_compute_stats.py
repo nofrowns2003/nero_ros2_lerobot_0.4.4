@@ -364,6 +364,29 @@ def test_running_quantile_stats_multiple_batch_updates():
     np.testing.assert_allclose(running_stats._mean, expected_mean, atol=1e-10)
 
 
+def test_running_quantile_stats_uint8_moments_do_not_overflow():
+    """Image moments must be computed in floating point, not wrapped uint8."""
+    data = np.array(
+        [
+            [0, 255, 32],
+            [64, 192, 96],
+            [128, 128, 160],
+            [255, 0, 224],
+        ],
+        dtype=np.uint8,
+    )
+    running_stats = RunningQuantileStats()
+
+    running_stats.update(data[:2])
+    running_stats.update(data[2:])
+    stats = running_stats.get_statistics()
+
+    expected = data.astype(np.float64)
+    np.testing.assert_allclose(stats["mean"], np.mean(expected, axis=0), atol=1e-10)
+    np.testing.assert_allclose(stats["std"], np.std(expected, axis=0), atol=1e-10)
+    assert np.all(stats["std"] > 0)
+
+
 def test_running_quantile_stats_get_statistics_basic():
     """Test getting basic statistics without quantiles."""
     np.random.seed(42)

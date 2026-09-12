@@ -1,7 +1,7 @@
 {
   "dataset": {
-    "repo_id": "szy/nero_ge_clean_train",
-    "root": "/home/szy/.cache/huggingface/lerobot/szy/nero_ge_clean_train",
+    "repo_id": "szy/nero_ge_clean_trimmed_train",
+    "root": "/home/szy/.cache/huggingface/lerobot/szy/nero_ge_clean_trimmed_train",
     "expected_robot_type": "nero_ros2",
     "expected_fps": 30,
     "episodes": null,
@@ -16,15 +16,15 @@
     }
   },
   "validation_dataset": {
-    "repo_id": "szy/nero_ge_clean_val",
-    "root": "/home/szy/.cache/huggingface/lerobot/szy/nero_ge_clean_val",
+    "repo_id": "szy/nero_ge_clean_trimmed_val",
+    "root": "/home/szy/.cache/huggingface/lerobot/szy/nero_ge_clean_trimmed_val",
     "expected_episodes": 6,
     "expected_fps": 30,
     "video_backend": "pyav"
   },
   "test_dataset": {
-    "repo_id": "szy/nero_ge_clean_test",
-    "root": "/home/szy/.cache/huggingface/lerobot/szy/nero_ge_clean_test",
+    "repo_id": "szy/nero_ge_clean_trimmed_test",
+    "root": "/home/szy/.cache/huggingface/lerobot/szy/nero_ge_clean_trimmed_test",
     "expected_episodes": 7,
     "expected_fps": 30,
     "video_backend": "pyav"
@@ -48,7 +48,7 @@
     "use_peft": false,
     "pretrained_path": null,
     "push_to_hub": false,
-    "repo_id": "szy/nero_ge_clean_act_color_fisheye_30hz",
+    "repo_id": "szy/nero_ge_clean_trimmed_act_color_fisheye_30hz",
     "private": true,
     "license": "apache-2.0",
     "tags": [
@@ -95,8 +95,8 @@
     "scheduler": null
   },
   "training": {
-    "output_dir": "/home/szy/lerobot-0.4.4-clean/outputs/train/nero_ge_clean_act_color_fisheye_30hz",
-    "job_name": "nero_ge_clean_act_color_fisheye_30hz",
+    "output_dir": "/home/szy/lerobot-0.4.4-clean/outputs/train/nero_ge_clean_trimmed_act_color_fisheye_30hz",
+    "job_name": "nero_ge_clean_trimmed_act_color_fisheye_30hz",
     "resume": false,
     "seed": 1000,
     "num_workers": 2,

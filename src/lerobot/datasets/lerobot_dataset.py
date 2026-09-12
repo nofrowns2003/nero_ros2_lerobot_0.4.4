@@ -1168,6 +1168,26 @@ class LeRobotDataset(torch.utils.data.Dataset):
         else:
             self.image_writer.save_image(image=image, fpath=fpath, compress_level=compress_level)
 
+    def prepare_episode(self) -> bool:
+        """Prepare streaming video outputs before the real-time recording loop starts."""
+        if self.episode_buffer is None:
+            self.episode_buffer = self.create_episode_buffer()
+        if self.episode_buffer["size"] != 0:
+            raise RuntimeError("Cannot prepare streaming encoders after episode frames were added")
+        if self._streaming_encoder is None or self._streaming_encoder.episode_active:
+            return False
+
+        video_shapes = {
+            key: tuple(self.features[key]["shape"])
+            for key in self.meta.video_keys
+        }
+        self._streaming_encoder.start_episode(
+            video_keys=list(self.meta.video_keys),
+            temp_dir=self.root,
+            video_shapes=video_shapes,
+        )
+        return True
+
     def add_frame(self, frame: dict) -> None:
         """
         This function only adds the frame to the episode_buffer. Apart from images — which are written in a
@@ -1193,10 +1213,7 @@ class LeRobotDataset(torch.utils.data.Dataset):
 
         # Start streaming encoder on first frame of episode (once, before iterating keys)
         if frame_index == 0 and self._streaming_encoder is not None:
-            self._streaming_encoder.start_episode(
-                video_keys=list(self.meta.video_keys),
-                temp_dir=self.root,
-            )
+            self.prepare_episode()
 
         # Add frame features to episode_buffer
         for key in frame:

@@ -53,10 +53,16 @@ class RunningQuantileStats:
         """
         batch = batch.reshape(-1, batch.shape[-1])
         num_elements, vector_length = batch.shape
+        # Images enter this accumulator as uint8. Squaring uint8 directly wraps
+        # modulo 256 (for example, 255**2 becomes 1), which makes
+        # E[x**2] - E[x]**2 negative and previously collapsed image std to zero.
+        # Use float64 for both moments regardless of the source dtype. Keep the
+        # original batch for min/max and histogram updates.
+        batch_for_moments = batch.astype(np.float64, copy=False)
 
         if self._count == 0:
-            self._mean = np.mean(batch, axis=0)
-            self._mean_of_squares = np.mean(batch**2, axis=0)
+            self._mean = np.mean(batch_for_moments, axis=0)
+            self._mean_of_squares = np.mean(np.square(batch_for_moments), axis=0)
             self._min = np.min(batch, axis=0)
             self._max = np.max(batch, axis=0)
             self._histograms = [np.zeros(self._num_quantile_bins) for _ in range(vector_length)]
@@ -80,8 +86,8 @@ class RunningQuantileStats:
 
         self._count += num_elements
 
-        batch_mean = np.mean(batch, axis=0)
-        batch_mean_of_squares = np.mean(batch**2, axis=0)
+        batch_mean = np.mean(batch_for_moments, axis=0)
+        batch_mean_of_squares = np.mean(np.square(batch_for_moments), axis=0)
 
         # Update running mean and mean of squares
         self._mean += (batch_mean - self._mean) * (num_elements / self._count)
